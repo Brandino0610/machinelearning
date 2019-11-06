@@ -1,6 +1,7 @@
 import pandas as pd
 import tensorflow as tf
 import numpy as np
+#importing stufff
 
 # Hyper parameters
 BATCH_SIZE = 55
