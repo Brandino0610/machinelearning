@@ -21,16 +21,17 @@ X_TRAIN_DEPTH = int(x_train.__len__() / BATCH_SIZE)
 # Labels need to represent output data
 # Output will be candle trend data 1 for positive and 0 for negative
 labels = []
-for index, row in x_train.iterrows():
+for index, row in btc_data.iterrows():
     if row['Open'] < row['Close']:
         labels.append(1)
     else:
         labels.append(0)
 
 # Split labels for testing and training
+labels = labels[:x_test.__len__() + x_train.__len__()]
 y_test = labels[:330]
 y_train = labels[330:]
-Y_TRAIN_DEPTH = labels.__len__() / BATCH_SIZE
+Y_TRAIN_DEPTH = int(len(y_train) / BATCH_SIZE)
 
 # Convert to tensors
 y_test = tf.Variable(y_test, tf.int64)
