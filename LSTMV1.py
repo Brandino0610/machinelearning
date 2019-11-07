@@ -31,20 +31,22 @@ for index, row in btc_data.iterrows():
 labels = labels[:x_test.__len__() + x_train.__len__()]
 y_test = labels[:330]
 y_train = labels[330:]
+Y_TEST_DEPTH = int(len(y_test) / BATCH_SIZE)
 Y_TRAIN_DEPTH = int(len(y_train) / BATCH_SIZE)
 
 # Convert to tensors
-y_test = tf.Variable(y_test, tf.int64)
+y_test = tf.constant(y_test, tf.int64)
 y_train = tf.Variable(y_train, tf.int64)
-x_test = tf.Variable(x_test.to_numpy(), tf.float64)
+x_test = tf.constant(x_test.to_numpy(), tf.float64)
 x_train = tf.Variable(x_train.to_numpy(), tf.float64)
 
 
 # Batch all data
-# x_test = tf.reshape(x_test, [X_TEST_DEPTH, BATCH_SIZE, STATE_SIZE])
+x_test = tf.reshape(x_test, [X_TEST_DEPTH, BATCH_SIZE, STATE_SIZE])
+y_test = tf.reshape(y_test, [Y_TEST_DEPTH, BATCH_SIZE, 1])
 x_train = tf.reshape(x_train, [X_TRAIN_DEPTH, BATCH_SIZE, STATE_SIZE])
-y_train = tf.reshape(y_train, [Y_TRAIN_DEPTH, BATCH_SIZE])
-
+y_train = tf.reshape(y_train, [Y_TRAIN_DEPTH, BATCH_SIZE, 1])
+print(tf.shape(x_train))
 # Build Model
 model = tf.keras.Sequential()
 model.add(tf.keras.layers.LSTM(770, input_shape=[BATCH_SIZE, STATE_SIZE]))
