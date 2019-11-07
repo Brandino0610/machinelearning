@@ -1,7 +1,7 @@
 import pandas as pd
 import tensorflow as tf
+import matplotlib.pyplot as plt
 import numpy as np
-#importing stufff
 
 # Hyper parameters
 BATCH_SIZE = 55
@@ -16,7 +16,6 @@ x_train = btc_data[BATCH_SIZE * 6:btc_data.__len__() - (btc_data.__len__() % BAT
 
 X_TEST_DEPTH = int(x_test.__len__() / BATCH_SIZE)
 X_TRAIN_DEPTH = int(x_train.__len__() / BATCH_SIZE)
-
 
 # Labels need to represent output data
 # Output will be candle trend data 1 for positive and 0 for negative
@@ -46,20 +45,41 @@ x_test = tf.reshape(x_test, [X_TEST_DEPTH, BATCH_SIZE, STATE_SIZE])
 y_test = tf.reshape(y_test, [Y_TEST_DEPTH, BATCH_SIZE, 1])
 x_train = tf.reshape(x_train, [X_TRAIN_DEPTH, BATCH_SIZE, STATE_SIZE])
 y_train = tf.reshape(y_train, [Y_TRAIN_DEPTH, BATCH_SIZE, 1])
-print(tf.shape(x_train))
+
 # Build Model
 model = tf.keras.Sequential()
 model.add(tf.keras.layers.LSTM(770, input_shape=[BATCH_SIZE, STATE_SIZE]))
-model.add(tf.keras.layers.Dense(21, activation='softmax'))
+model.add(tf.keras.layers.Dense(256))
+model.add(tf.keras.layers.Dense(55))
 model.build()
 
 # Compile model
-model.compile(optimizer=tf.keras.optimizers.Adagrad(),
-              loss=tf.keras.losses.SparseCategoricalCrossentropy())
+model.compile(optimizer=tf.keras.optimizers.RMSprop(),
+              loss=tf.keras.losses.CategoricalCrossentropy())
 
 # Fit model
-model.fit(x_train, y_train,
-          validation_data=(x_test, y_test),
-          batch_size=BATCH_SIZE,
-          epochs=EPOCHS)
+single_step_history = model.fit(x_train, y_train,
+                                validation_data=(x_test, y_test),
+                                batch_size=BATCH_SIZE,
+                                epochs=EPOCHS)
+
+
+def plot_train_history(history, title):
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+
+    epochs = range(len(loss))
+
+    plt.figure()
+
+    plt.plot(epochs, loss, 'b', label='Training loss')
+    plt.plot(epochs, val_loss, 'r', label='Validation loss')
+    plt.title(title)
+    plt.legend()
+
+    plt.show()
+
+
+plot_train_history(single_step_history,
+                   'Single Step History and Validation')
 
