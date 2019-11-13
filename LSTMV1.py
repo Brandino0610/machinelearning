@@ -55,7 +55,7 @@ model.add(tf.keras.layers.Dense(55))
 model.build()
 
 # Compile model
-model.compile(optimizer=tf.keras.optimizers.RMSprop(),
+model.compile(optimizer=tf.keras.optimizers.Adam(),
               loss=tf.keras.losses.CategoricalCrossentropy())
 
 # Fit model
