@@ -81,6 +81,5 @@ def plot_train_history(history, title):
     plt.show()
 
 
-plot_train_history(single_step_history,
-                   'Single Step History and Validation')
+plot_train_history(single_step_history, 'Single Step History and Validation')
 
